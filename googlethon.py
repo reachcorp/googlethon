@@ -22,6 +22,7 @@ def main():
 
         logging.info(" Démarrage de Googlethon ")
 
+        # Recupère les personnes dans la file kafka entre Housthon et Googlethon
         consumer = KafkaConsumer(
             'topicgoogle',
             bootstrap_servers='localhost:8092',
@@ -29,14 +30,20 @@ def main():
             auto_offset_reset='earliest',
             value_deserializer=lambda v: json.loads(v.decode('utf-8')))
 
+        # Set un producer
         producer = KafkaProducer(
             bootstrap_servers='localhost:8092',
             value_serializer=lambda v: json.dumps(v).encode('utf-8'))
 
+        # Traite les résultats (personnes) récupérés par le consumer
         for message in consumer:
             message = message.value
             query = message['nom'] +" "+message['prenom']
+
+            # Pour chaque url récupéré en fonction du nom et du prénom,
             for j in search(query, tld="co.in", num=int(options.number), stop=int(options.number), pause=2):
+
+                # Envoie l'url + les infos de la personne dans le Topic topicscrapython
                 producer.send(
                     'topicscrapython',
                     value={'url': j, 'nom': message['nom'], 'prenom': message['nom'], 'idBio': message['idBio'] })
