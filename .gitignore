@@ -34,7 +34,8 @@ out/
 # DOCKER
 #################
 docker/*
-!colissithon.yml
+!.env
+!kafkagooglethon.yml
 !requirements.txt
 !Dockerfile
 

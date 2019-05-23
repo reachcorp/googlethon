@@ -9,7 +9,8 @@ def main():
         consumer = KafkaConsumer(
             'topicscrapython',
             bootstrap_servers='localhost:8092',
-            auto_offset_reset='smallest',
+            group_id='consumer',
+            auto_offset_reset='earliest',
             value_deserializer=lambda v: json.loads(v.decode('utf-8')))
         for message in consumer:
             message = message.value
