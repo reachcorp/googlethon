@@ -1,6 +1,7 @@
 from kafka import KafkaConsumer
 import json
 import logging
+import time
 
 
 def main():
@@ -12,6 +13,7 @@ def main():
             group_id='consumer',
             auto_offset_reset='earliest',
             value_deserializer=lambda v: json.loads(v.decode('utf-8')))
+        print(time.time())
         for message in consumer:
             message = message.value
             print(message)

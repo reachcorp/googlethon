@@ -4,8 +4,9 @@ import json
 import logging
 from googlesearch import search
 from argparse import ArgumentParser
+from time import sleep
 
-parser = ArgumentParser(description='OpenALPR Python Test Program')
+parser = ArgumentParser(description='Retrieving Google URL python script')
 
 parser.add_argument("-n", "--number", dest="number", action="store", default="10",
                     help="Number of URL wanted")
@@ -39,14 +40,31 @@ def main():
         for message in consumer:
             message = message.value
             query = message['nom'] +" "+message['prenom']
-
+            print("### Googlethon : reception d'un message ! ")
+            print("### recherche de "+query)
             # Pour chaque url récupéré en fonction du nom et du prénom,
-            for j in search(query, tld="co.in", num=int(options.number), stop=int(options.number), pause=2):
-
+            annulaire = 0
+            # search: requete à google
+            # search.num :  le nombre de resultat par page
+            # search.pause : le nombre de seconde de pause entre chaque page
+            # pour ne pas avoir son IP bloqué par Google (si le nombre de requete est trop élevé)
+            # search.stop : arret à n°X resultats, None pour chercher sans limite
+            # search.only_standard : true -> resultat standard
+            #                        false -> tous les liens
+            for j in search(
+                    query,
+                    tld="fr",
+                    lang="fr",
+                    num=50,
+                    start=0,
+                    stop=int(options.number),
+                    pause=2,
+                    only_standard=True):
+                annulaire += 1
                 # Envoie l'url + les infos de la personne dans le Topic topicscrapython
                 producer.send(
                     'topicscrapython',
-                    value={'url': j, 'nom': message['nom'], 'prenom': message['nom'], 'idBio': message['idBio'] })
+                    value={'indice':annulaire, 'url': j, 'nom': message['nom'], 'prenom': message['prenom'], 'idBio': message['idBio'] })
                 logging.debug(j)
 
     except Exception as e:
