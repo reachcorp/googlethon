@@ -34,10 +34,11 @@ out/
 # DOCKER
 #################
 docker/*
-!.env
-!kafkagooglethon.yml
-!requirements.txt
-!Dockerfile
+!docker/.env
+!docker/googlethon.yml
+!docker/raw/requirements.txt
+!docker/raw/Dockerfile
+!docker/raw/sshd_config
 
 
 # Byte-compiled / optimized / DLL files

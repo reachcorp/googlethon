@@ -1,0 +1,17 @@
+version: '3'
+services:
+  googlethon:
+    build:
+      context: ./raw/
+    #image: nicolasmir/googlethon:latest
+    ports:
+    - "2223:2223"
+    environment:
+      GOOGLETHON_NAME: GOOGLETHON
+    command:  bash -c 'python3 /app/googlethon.py -n ${NUMBER} -s ${STANDARD} -e ${ENDPOINT}'
+    #command: ["tail", "-f", "/dev/null"]
+    networks:
+    - insight
+networks:
+  insight:
+    external: true
