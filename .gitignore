@@ -33,12 +33,7 @@ out/
 ####################
 # DOCKER
 #################
-docker/*
-!docker/.env
-!docker/googlethon.yml
-!docker/raw/requirements.txt
-!docker/raw/Dockerfile
-!docker/raw/sshd_config
+docker/raw/dockerdist/*
 
 
 # Byte-compiled / optimized / DLL files
