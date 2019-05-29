@@ -22,4 +22,6 @@ Bouchon qui permet de générer de Biographics
     python consumerTopic.py
 Consumer s'abonne à un topic qui contient les résultats retournés par googlethon et qui les affiche
     
-    
+## Format de données attendu dans la file Kafka
+En entrée : {'nom': '', 'prenom': '', 'idBio': 'xxxx' }
+En sortie : {'url': list[], 'nom': '', 'prenom': '', 'idBio': ''}
