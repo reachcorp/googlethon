@@ -24,10 +24,10 @@ def main():
         tab=[
             #{'nom': 'Jouy', 'prenom': 'Bob', 'idBio': '0001' }
             #,
-            {'nom': 'Trump', 'prenom': 'Donald', 'idBio': '0002' }
+            {'nom': 'Chirac', 'prenom': 'Jacques', 'idBio': '0006' }
         ]
         for i in range(len(tab)):
-            producer.send('topicgoogle', value=tab[i])
+            producer.send('housToGoogle', value=tab[i])
             sleep(0.5)
 
     except Exception as e:
