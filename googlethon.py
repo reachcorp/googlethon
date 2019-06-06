@@ -14,7 +14,7 @@ topic_out_scrapy=str(os.environ['TOPIC_OUT_SCRAPY'])
 debug_level=os.environ["DEBUG"]
 
 def convert(s):
-    if s == "True": return True;
+    if s == "Vrai": return True;
     return False
 
 def main():
@@ -38,7 +38,7 @@ def main():
             topic_in,
             bootstrap_servers=[kafka_endpoint],
             group_id='googlethon',
-            auto_offset_reset='latest',
+            auto_offset_reset='earliest',
             value_deserializer=lambda v: json.loads(v.decode('utf-8')))
 
         # Set un producer
@@ -50,8 +50,8 @@ def main():
         for message in consumer:
             message = message.value
             query = message['nom'] +" "+message['prenom']
-            print("### Googlethon : reception d'un message ! ")
-            print("### recherche de "+query)
+            logging.info("### Googlethon : reception d'un message ! ")
+            logging.info("### recherche de "+query)
             # Pour chaque url récupéré en fonction du nom et du prénom,
             annulaire = 0
             # search: requete à google
