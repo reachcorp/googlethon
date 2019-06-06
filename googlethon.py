@@ -52,6 +52,10 @@ def main():
             query = message['nom'] +" "+message['prenom']
             logging.info("### Googlethon : reception d'un message ! ")
             logging.info("### recherche de "+query)
+            #recuperation des infos du message du consumer
+            nom=message['nom']
+            prenom=message['prenom']
+            idBio=message['idBio']
             # Pour chaque url récupéré en fonction du nom et du prénom,
             annulaire = 0
             # search: requete à google
@@ -74,9 +78,16 @@ def main():
                 # Envoie l'url + les infos de la personne dans le Topic topicscrapython
                 logging.debug(j)
                 urlList.append(j)
+            #json a mettre dans la file kafka
+            jsonvalue={
+                "url": urlList,
+                "nom": nom,
+                "prenom": prenom,
+                "idBio": idBio
+            }
             producer.send(
                 topic_out_scrapy,
-                value={'url': urlList, 'nom': message['nom'], 'prenom': message['prenom'], 'idBio': message['idBio'] })
+                value=(jsonvalue))
     except Exception as e:
         logging.error("ERROR : ", e)
     finally:
