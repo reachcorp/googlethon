@@ -1,3 +1,3 @@
 #!/bin/sh
 
-echo "The application is starting: ${GOOGLETHON_NAME}"
+exec python3 /app/googlethon.py

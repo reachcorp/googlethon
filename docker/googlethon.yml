@@ -1,17 +1,18 @@
 version: '3'
 services:
   googlethon:
+    image: reachhubcorp/googlethon:latest
+    container_name: googlethon
     build:
-      context: ./raw/
-    #image: nicolasmir/googlethon:latest
+      context: ./context/
     ports:
-    - "2223:2223"
+      - "2223:2223"
     environment:
-      GOOGLETHON_NAME: GOOGLETHON
-    command:  bash -c 'python3 /app/googlethon.py -n ${NUMBER} -s ${STANDARD} -e ${ENDPOINT}'
-    #command: ["tail", "-f", "/dev/null"]
-    networks:
-    - insight
-networks:
-  insight:
-    external: true
+      KAFKA_IP: 192.168.0.31
+      KAFKA_PORT: 8092
+      NUMBER_RESULT: 10
+      STANDARD: Vrai
+      TOPIC_IN: housToGoogle
+      TOPIC_OUT_SCRAPY: urlToScrapy
+      DEBUG: INFO
+

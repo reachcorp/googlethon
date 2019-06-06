@@ -15,7 +15,6 @@ RUN apt-get install -y vim
 
 COPY sshd_config /etc/ssh/sshd_config
 RUN mkdir /app
-COPY requirements.txt /app/
 COPY dockerdist/*.* /app/
 
 RUN pip3 install --no-cache-dir -r /app/requirements.txt
@@ -24,8 +23,8 @@ RUN  apt-get -y autoclean && apt-get -y autoremove && \
      apt-get -y purge $(dpkg --get-selections | grep deinstall | sed s/deinstall//g) && \
      rm -rf /var/lib/apt/lists/*
 
-#RUN chmod 755 ./app/entrypoint.sh
+RUN chmod 755 ./app/entrypoint.sh
 
-#ENTRYPOINT ["./app/entrypoint.sh"]
+ENTRYPOINT ["./app/entrypoint.sh"]
 
-EXPOSE 9875
+EXPOSE 2223

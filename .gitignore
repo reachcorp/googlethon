@@ -33,7 +33,7 @@ out/
 ####################
 # DOCKER
 #################
-docker/raw/dockerdist/*
+docker/context/dockerdist/*
 
 
 # Byte-compiled / optimized / DLL files
