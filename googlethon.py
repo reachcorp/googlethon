@@ -4,6 +4,7 @@ from kafka import KafkaConsumer
 import json
 import logging
 from googlesearch import search
+import requests
 
 
 kafka_endpoint = str(os.environ['KAFKA_IP']) + ":" + str(os.environ['KAFKA_PORT'])
@@ -13,10 +14,32 @@ topic_in=str(os.environ['TOPIC_IN'])
 topic_out_scrapy=str(os.environ['TOPIC_OUT_SCRAPY'])
 debug_level=os.environ["DEBUG"]
 
+# kafka_endpoint = "localhost:8092"
+# number = 10
+# standard = "True"
+# topic_in="housToGoogle"
+# topic_out_scrapy="urlToScrapy"
+# debug_level="DEBUG"
+
 def convert(s):
     if s == "Vrai": return True;
     return False
 
+
+def get_dico():
+
+    logging.debug("Asking for Colissithon's dico")
+    j_data= ''
+    with requests.Session() as session:
+            # urlGet = url+"/filter?page=0&query="+dataid+"&size=20&filter=&sort=rawDataCreationDate,desc&sort=id"
+            urlGet = "http://localhost:9876/dictionnaire"
+            basic_get_response = session.get(url=urlGet)
+            if basic_get_response.ok:
+                j_data = json.loads(basic_get_response.content.decode('utf-8'))
+            else:
+                # If response code is not ok (200), print the resulting http error code with description
+                return basic_get_response.raise_for_status()
+    return j_data
 def main():
     try:
         logging.basicConfig(level=logging.INFO)
@@ -30,6 +53,12 @@ def main():
             logging.basicConfig(level=logging.ERROR)
         elif debug_level == "CRITICAL":
             logging.basicConfig(level=logging.CRITICAL)
+
+        tab=[
+            {'sport': [{'rugby':'3'}, {'football':'8'}, {'tennis':'6'}]},
+            {'musique': [{'jazz':'2'}, {'rap':'8'}, {'rock':'4'}]}
+        ]
+        tab = get_dico() # récupère le dictionnaire, GET request à colissithon
 
         logging.info(" Démarrage de Googlethon ")
 
@@ -49,45 +78,53 @@ def main():
         # Traite les résultats (personnes) récupérés par le consumer
         for message in consumer:
             message = message.value
-            query = message['nom'] +" "+message['prenom']
-            logging.info("### Googlethon : reception d'un message ! ")
-            logging.info("### recherche de "+query)
-            #recuperation des infos du message du consumer
-            nom=message['nom']
-            prenom=message['prenom']
-            idBio=message['idBio']
-            # Pour chaque url récupéré en fonction du nom et du prénom,
-            annulaire = 0
-            # search: requete à google
-            # search.num :  le nombre de resultat par page
-            # search.pause : le nombre de seconde de pause entre chaque page
-            # pour ne pas avoir son IP bloqué par Google (si le nombre de requete est trop élevé)
-            # search.stop : arret à n°X resultats, None pour chercher sans limite
-            # search.only_standard : True -> resultat standard
-            #                        False -> tous les liens
-            urlList=[]
-            for j in search(
-                    query,
-                    tld="fr",
-                    lang="fr",
-                    num=50,
-                    start=0,
-                    stop=int(number),
-                    pause=2,
-                    only_standard=convert(standard)):
-                # Envoie l'url + les infos de la personne dans le Topic topicscrapython
-                logging.debug(j)
-                urlList.append(j)
-            #json a mettre dans la file kafka
-            jsonvalue={
-                "url": urlList,
-                "nom": nom,
-                "prenom": prenom,
-                "idBio": idBio
-            }
-            producer.send(
-                topic_out_scrapy,
-                value=(jsonvalue))
+            # for theme, motClef in [(theme, motClef) for theme in tab for motClef in theme:
+            for theme in tab:
+                for themeName, listMotClefsPond in theme.items():
+                    for motClefsPond in listMotClefsPond:
+                        motclef = next(iter(motClefsPond))
+                        ponderation= motClefsPond.get(motclef)
+                        query = message['nom'] +" "+message['prenom'] +" "+ motclef
+                        logging.info("### Googlethon : reception d'un message ! ")
+                        logging.info("### recherche de "+query)
+                        #recuperation des infos du message du consumer
+                        nom=message['nom']
+                        prenom=message['prenom']
+                        idBio=message['idBio']
+                        # Pour chaque url récupéré en fonction du nom et du prénom,
+                        annulaire = 0
+                        # search: requete à google
+                        # search.num :  le nombre de resultat par page
+                        # search.pause : le nombre de seconde de pause entre chaque page
+                        # pour ne pas avoir son IP bloqué par Google (si le nombre de requete est trop élevé)
+                        # search.stop : arret à n°X resultats, None pour chercher sans limite
+                        # search.only_standard : True -> resultat standard
+                        #                        False -> tous les liens
+                        urlList=[]
+                        for j in search(
+                                query,
+                                tld="fr",
+                                lang="fr",
+                                num=50,
+                                start=0,
+                                stop=int(number),
+                                pause=2,
+                                only_standard=convert(standard)):
+                            # Envoie l'url + les infos de la personne dans le Topic topicscrapython
+                            logging.debug(j)
+                            urlList.append(j)
+                        #json a mettre dans la file kafka
+                        jsonvalue={
+                            "nom": nom,
+                            "prenom": prenom,
+                            "motclef" : motclef,
+                            "ponderation" : ponderation,
+                            "idBio": idBio,
+                            "url": urlList,
+                        }
+                        producer.send(
+                            topic_out_scrapy,
+                            value=(jsonvalue))
     except Exception as e:
         logging.error("ERROR : ", e)
     finally:
