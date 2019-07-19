@@ -20,14 +20,13 @@ def main():
 
         logging.info(" Démarrage du bouchon ")
 
-        producer = KafkaProducer(bootstrap_servers='localhost:8092', value_serializer=lambda v: json.dumps(v).encode('utf-8'))
-        tab=[
-            #{'nom': 'Jouy', 'prenom': 'Bob', 'idBio': '0001' }
-            #,
-            {'nom': 'Chirac', 'prenom': 'Jacques', 'idBio': '0006' }
-        ]
+        producer = KafkaProducer(bootstrap_servers='localhost:8092',
+                                 value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+
+        tab = {'idBio': '65568', 'nom': 'Chirac', 'prenom': 'Jacques'}
+
         for i in range(len(tab)):
-            producer.send('housToGoogle', value=tab[i])
+            producer.send('housToGoogle', value=tab)
             sleep(0.5)
 
     except Exception as e:

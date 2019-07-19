@@ -15,4 +15,5 @@ services:
       TOPIC_IN: housToGoogle
       TOPIC_OUT_SCRAPY: urlToScrapy
       DEBUG: INFO
+      SEARCH_TYPE: SearchUrl
 
