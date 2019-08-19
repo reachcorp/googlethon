@@ -16,4 +16,4 @@ class SearchNews(Search):
             start=0,
             stop=int(number),
             pause=2,
-            only_standard=False)
+            only_standard=(standard == "True"))

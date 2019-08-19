@@ -16,7 +16,7 @@ class SearchUrl(Search):
             start=0,
             stop=int(number),
             pause=2,
-            only_standard=Search.convert(standard))
+            only_standard=(standard == "True"))
 
 
 

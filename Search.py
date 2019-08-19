@@ -18,7 +18,4 @@ class Search(object):
         assert 0, "Bad shape creation: " + type
     factory = staticmethod(factory)
 
-    def convert(s):
-        if s == "Vrai": return True;
-        return False
 

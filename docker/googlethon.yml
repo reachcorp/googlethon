@@ -11,7 +11,7 @@ services:
       KAFKA_IP: 192.168.0.31
       KAFKA_PORT: 8092
       NUMBER_RESULT: 10
-      STANDARD: Vrai
+      STANDARD: True
       TOPIC_IN: housToGoogle
       TOPIC_OUT_SCRAPY: urlToScrapy
       DEBUG: INFO

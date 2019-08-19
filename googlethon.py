@@ -2,7 +2,6 @@ from kafka import KafkaProducer
 from kafka import KafkaConsumer
 import json
 import logging
-from googlesearch import search
 from Search import Search
 
 
@@ -14,19 +13,15 @@ from Search import Search
 # debug_level = os.environ["DEBUG"]
 # search_type = os.environ["SEARCH_TYPE"]
 
-kafka_endpoint = "192.168.0.10:8092"
+kafka_endpoint = "192.168.0.9:8092"
 number = 10
 standard = "True"
 topic_in = "housToGoogle"
 topic_out_scrapy = "urlToScrapy"
-debug_level = "DEBUG"
+debug_level = "INFO"
 # Trois options de recherche Google : SearchImage, SearchUrl, SearchNews
 # search_type est aussi le group_id du consumer kafka
 search_type = "SearchUrl"
-
-def convert(s):
-    if s == "Vrai": return True;
-    return False
 
 
 def main():
@@ -42,11 +37,6 @@ def main():
             logging.basicConfig(level=logging.ERROR)
         elif debug_level == "CRITICAL":
             logging.basicConfig(level=logging.CRITICAL)
-
-        # tab = [
-        #     {'sport': [{'rugby': '3'}, {'football': '8'}, {'tennis': '6'}]},
-        #     {'musique': [{'jazz': '2'}, {'rap': '8'}, {'rock': '4'}]}
-        # ]
 
         logging.info(" Démarrage de Googlethon ")
 
@@ -75,7 +65,9 @@ def main():
             nom = message['nom']
             prenom = message['prenom']
             idBio = message['idBio']
-            # Pour chaque url récupéré en fonction du nom et du prénom,
+
+            ######################################################################################
+            #  Pour chaque url récupéré en fonction du nom et du prénom,
             # search: requete à google
             # search.num :  le nombre de resultat par page
             # search.pause : le nombre de seconde de pause entre chaque page
@@ -83,6 +75,7 @@ def main():
             # search.stop : arret à n°X resultats, None pour chercher sans limite
             # search.only_standard : True -> resultat standard
             #                        False -> tous les liens
+            ######################################################################################
             urlList = []
             for j in Search.factory(search_type).search(query, number, standard):
                 # Envoie l'url + les infos de la personne dans le Topic topicscrapython
