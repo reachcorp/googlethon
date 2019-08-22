@@ -3,6 +3,7 @@ from kafka import KafkaConsumer
 import json
 import logging
 from Search import Search
+import datetime
 
 
 # kafka_endpoint = str(os.environ['KAFKA_IP']) + ":" + str(os.environ['KAFKA_PORT'])
@@ -38,7 +39,7 @@ def main():
         elif debug_level == "CRITICAL":
             logging.basicConfig(level=logging.CRITICAL)
 
-        logging.info(" Démarrage de Googlethon ")
+        logging.info(" Démarrage de Googlethon " + str(datetime.datetime.now()))
 
         # Recupère les personnes dans la file kafka entre Housthon et Googlethon
         consumer = KafkaConsumer(
@@ -59,7 +60,7 @@ def main():
             query = message['nom'] + " " + message['prenom']
             if 'motclef' in message:
                 query = query + " " + message['motclef']
-            logging.info("### Googlethon : reception d'un message ! ")
+            logging.info("### Googlethon : reception d'un message ! " + str(datetime.datetime.now()))
             logging.info("### recherche de " + query)
             # recuperation des infos du message du consumer
             nom = message['nom']
