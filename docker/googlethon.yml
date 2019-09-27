@@ -8,12 +8,11 @@ services:
     ports:
       - "2223:2223"
     environment:
-      KAFKA_IP: 192.168.0.31
+      KAFKA_IP: "${ipkafka}"
       KAFKA_PORT: 8092
       NUMBER_RESULT: 10
-      STANDARD: True
+      STANDARD: "True"
       TOPIC_IN: housToGoogle
       TOPIC_OUT_SCRAPY: urlToScrapy
       DEBUG: INFO
       SEARCH_TYPE: SearchUrl
-
