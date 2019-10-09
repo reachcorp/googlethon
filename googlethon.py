@@ -1,8 +1,9 @@
 import datetime
 import json
 import logging
-import requests
 import urllib.parse
+from Search import Search
+import requests
 from bs4 import BeautifulSoup
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
@@ -24,22 +25,6 @@ search_type = os.environ["SEARCH_TYPE"]
 # # Trois options de recherche Google : SearchImage, SearchUrl, SearchNews
 # # search_type est aussi le group_id du consumer kafka
 # search_type = "SearchUrl"
-
-def modulo_url (search, resultPerPage, nbMax) :
-
-    #TODO: attention, on rajoute "+2" comme un cochon sinon on a un delta, à investigué quand on aura le temps...
-    nbMax +=2
-
-    encoded_search = urllib.parse.quote(search)
-    #TODO valider le domaine google.co.in VERSUS google.fr ou .com....
-    racineURL = 'https://www.google.co.in/search?q={}&start={}&num={}&filter=0'
-
-    tabURL=[]
-    for i in range(nbMax // resultPerPage):
-        tabURL.append(racineURL.format(encoded_search, i*resultPerPage, resultPerPage))
-
-    tabURL.append(racineURL.format(encoded_search, (nbMax // resultPerPage)*resultPerPage, (nbMax % resultPerPage)))
-    return tabURL
 
 def main():
     try:
@@ -83,60 +68,24 @@ def main():
             prenom = message['prenom']
             idBio = message['idBio']
 
-            ######################################################################################
-            #  Pour chaque url récupéré en fonction du nom et du prénom,
-            # search: requete à google
-            # search.num :  le nombre de resultat par page
-            # search.pause : le nombre de seconde de pause entre chaque page
-            # pour ne pas avoir son IP bloqué par Google (si le nombre de requete est trop élevé)
-            # search.stop : arret à n°X resultats, None pour chercher sans limite
-            # search.only_standard : True -> resultat standard
-            #                        False -> tous les liens
-            ######################################################################################
+            # query : les mots de la requête
+            # number :  le nombre de resultats souhaité au total
+            # urlList : la liste dans laquelle arriveront les résultats de la requête
             urlList = []
 
-            ########################
-            ### ANCIEN CODE
-            ########################
-            # for j in Search.factory(search_type).search(query, number, standard):
-            #     # Envoie l'url + les infos de la personne dans le Topic topicscrapython
-            #     logging.debug(j)
-            #     urlList.append(j)
+            Search.factory(search_type).search(query, number, urlList)
+            index = 1
+            for i in urlList :
+                print(str(index) + " : " + i)
+                index += 1
 
-
-            ########################
-            ### NOUVEAU CODE
-            ########################
-
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
-                'Accept' :
-                    'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                'Accept-Language' : 'fr-fr,en;q=0.5',
-                'Accept-Encoding' : 'gzip',
-                'DNT' : '1', # Do Not Track Request Header
-                'Connection' : 'close'
-            }
-
-            listeUrls = modulo_url(query, 50, number)
-
-
-            #TODO adapter pour fonctionner avec news et images.
-
-            # Remonte les URLs de google search, les URLs avec une balise de titre <h3>
-            for i in range(len(listeUrls)):
-                resp = requests.get(listeUrls[i], headers=headers).text
-                soup = BeautifulSoup(resp, 'html.parser')
-                for link in soup.findAll('a', href=True):
-                    if (str(link).find("<h3") != -1):
-                        urlList.append(link.attrs.get('href'))
 
             # json a mettre dans la file kafka
-            jsonvalue = { 'biographics': {
+            jsonvalue = {'biographics': {
                 "nom": nom,
                 "prenom": prenom,
                 "idBio": idBio
-                },
+            },
                 "url": urlList,
             }
 

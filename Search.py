@@ -1,6 +1,6 @@
 
 
-class Search(object):
+class Search():
 
     def search(self, query, number, standard):
         return
