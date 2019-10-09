@@ -25,7 +25,7 @@ def main():
 
         tab = {'idBio': '65568', 'nom': 'Chirac', 'prenom': 'Jacques'}
 
-        for i in range(len(tab)):
+        for i in range(len(1)):
             producer.send('housToGoogle', value=tab)
             sleep(0.5)
 
