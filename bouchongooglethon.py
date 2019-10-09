@@ -1,9 +1,9 @@
-from kafka import KafkaProducer
 import json
 import logging
+from argparse import ArgumentParser
 from time import sleep
 
-from argparse import ArgumentParser
+from kafka import KafkaProducer
 
 parser = ArgumentParser(description='Bouchon googlethon')
 
@@ -25,7 +25,7 @@ def main():
 
         tab = {'idBio': '65568', 'nom': 'Chirac', 'prenom': 'Jacques'}
 
-        for i in range(len(1)):
+        for i in range(1):
             producer.send('housToGoogle', value=tab)
             sleep(0.5)
 
