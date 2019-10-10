@@ -8,23 +8,23 @@ from bs4 import BeautifulSoup
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
 
-kafka_endpoint = str(os.environ['KAFKA_IP']) + ":" + str(os.environ['KAFKA_PORT'])
-number = str(os.environ['NUMBER_RESULT'])
-standard = str(os.environ['STANDARD'])
-topic_in = str(os.environ['TOPIC_IN'])
-topic_out_scrapy = str(os.environ['TOPIC_OUT_SCRAPY'])
-debug_level = os.environ["DEBUG"]
-search_type = os.environ["SEARCH_TYPE"]
+# kafka_endpoint = str(os.environ['KAFKA_IP']) + ":" + str(os.environ['KAFKA_PORT'])
+# number = str(os.environ['NUMBER_RESULT'])
+# standard = str(os.environ['STANDARD'])
+# topic_in = str(os.environ['TOPIC_IN'])
+# topic_out_scrapy = str(os.environ['TOPIC_OUT_SCRAPY'])
+# debug_level = os.environ["DEBUG"]
+# search_type = os.environ["SEARCH_TYPE"]
 
-# kafka_endpoint = "192.168.0.9:8092"
-# number = 10
-# standard = "True"
-# topic_in = "housToGoogle"
-# topic_out_scrapy = "urlToScrapy"
-# debug_level = "INFO"
-# # Trois options de recherche Google : SearchImage, SearchUrl, SearchNews
-# # search_type est aussi le group_id du consumer kafka
-# search_type = "SearchUrl"
+kafka_endpoint = "192.168.0.9:8092"
+number = 10
+standard = "True"
+topic_in = "housToGoogle"
+topic_out_scrapy = "urlToScrapy"
+debug_level = "INFO"
+# Trois options de recherche Google : SearchImage, SearchUrl, SearchNews
+# search_type est aussi le group_id du consumer kafka
+search_type = "SearchUrl"
 
 def main():
     try:
@@ -75,7 +75,7 @@ def main():
 
             Search.factory(search_type).search(query, number, urlList)
             index = 1
-            for i in urlList :
+            for i in urlList:
                 print(str(index) + " : " + i)
                 index += 1
 
@@ -87,6 +87,8 @@ def main():
                 "idBio": idBio
             },
                 "url": urlList,
+                "idDictionary": message['idDictionary'],
+                "depthLevel": message['depthLevel']
             }
 
             producer.send(
