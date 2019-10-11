@@ -80,7 +80,6 @@ def main():
 
 
             # json a mettre dans la file kafka
-<<<<<<< Updated upstream
             jsonvalue = {'biographics': {
                 "nom": nom,
                 "prenom": prenom,
