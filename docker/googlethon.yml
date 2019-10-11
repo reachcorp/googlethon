@@ -1,7 +1,14 @@
 version: '3'
 services:
+  selenium-firefox: #TODO à lancer avant googlethon
+    restart: always
+    image: selenium/standalone-firefox
+    volumes:
+      - /dev/shm:/dev/shm
+    ports:
+      - "4444:4444"
   googlethon:
-    image: reachhubcorp/googlethon:latest
+#    image: reachhubcorp/googlethon:latest
     container_name: googlethon
     build:
       context: ./context/
@@ -11,8 +18,9 @@ services:
       KAFKA_IP: "${ipkafka}"
       KAFKA_PORT: 8092
       NUMBER_RESULT: 10
-      STANDARD: "True"
       TOPIC_IN: housToGoogle
       TOPIC_OUT_SCRAPY: urlToScrapy
       DEBUG: INFO
-      SEARCH_TYPE: SearchUrl
+      SEARCH_TYPE: SearchResult
+      REMOTE_FIREFOX_IP: ${ipremotefirefox}
+      REMOTE_FIREFOX_PORT: ${portremotefirefox}

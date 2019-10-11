@@ -2,7 +2,10 @@ import time
 import urllib
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+import os
 
+remote_firefox_endpoint = str(os.environ['REMOTE_FIREFOX_IP']) + ":" + str(os.environ['REMOTE_FIREFOX_PORT'])
 
 class Search():
     def search(self, query, number, standard):
@@ -49,11 +52,15 @@ class Search():
 
     def get_urls(self, query, number, xpath):
         query = query.replace(' ', '+')
-        options = Options()
-        options.add_argument('--headless')
-        browser = webdriver.Firefox(executable_path=r"./lib/geckodriver", options=options)
+        # options = Options()
+        # options.add_argument('--headless')
+        # browser = webdriver.Firefox(executable_path=r"./lib/geckodriver", options=options)
 
-        listeUrls = Search.modulo_url(self, query, number)
+        browser = webdriver.Remote(
+            command_executor="http://"+remote_firefox_endpoint+"/wd/hub",
+            desired_capabilities=DesiredCapabilities.FIREFOX)
+
+        listeUrls = Search.modulo_url(self, query, int(number))
 
         # Remonte les URLs de google news, les URLs avec une balise de titre <h3>
         url_list = []

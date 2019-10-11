@@ -8,14 +8,20 @@ RUN apt-get update && \
     #sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config && \
 
 RUN apt-get update
+RUN apt-get install -y software-properties-common
 RUN apt-get install -y python3-pip
 RUN apt-get install -y curl
 RUN apt-get install -y unzip
-RUN apt-get install -y vim
+RUN add-apt-repository ppa:jonathonf/firefox-esr
+RUN apt update
+RUN apt-get install -y vim firefox-esr
+
 
 COPY sshd_config /etc/ssh/sshd_config
 RUN mkdir /app
 COPY dockerdist/*.* /app/
+RUN mkdir /app/lib
+COPY dockerdist/lib /app/lib
 
 RUN pip3 install --no-cache-dir -r /app/requirements.txt
 

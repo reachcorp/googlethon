@@ -14,15 +14,15 @@ topic_out_scrapy = str(os.environ['TOPIC_OUT_SCRAPY'])
 debug_level = os.environ["DEBUG"]
 search_type = os.environ["SEARCH_TYPE"]
 
-
 # kafka_endpoint = "192.168.0.9:8092"
-# number = 100
+# number = 10
 # topic_in = "housToGoogle"
 # topic_out_scrapy = "urlToScrapy"
 # debug_level = "DEBUG"
 # # Trois options de recherche Google : SearchImage, SearchUrl, SearchNews
 # # search_type est aussi le group_id du consumer kafka
-# search_type = "SearchNews"
+# search_type = "SearchUrl"
+
 
 def main():
     try:
