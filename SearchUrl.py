@@ -1,14 +1,18 @@
 import googlesearch
+from twisted.web.sux import identChars
+
 from Search import Search
 import logging
 import urllib
+import time
 import requests
 from bs4 import BeautifulSoup
+from selenium import webdriver
 
 
 class SearchUrl(Search):
+    # Crée les requêtes à effectuer successivement
     def modulo_url(self, query, resultPerPage, nbMax):
-
         # TODO: attention, on rajoute "+2" comme un cochon sinon on a un delta, à investiguer quand on aura le temps...
         nbMax += 2
 
@@ -24,29 +28,51 @@ class SearchUrl(Search):
             racineURL.format(encoded_search, (nbMax // resultPerPage) * resultPerPage, (nbMax % resultPerPage)))
         return tabURL
 
+    # Execute les requêtes créées par modulo_url
     def search(self, query, number, urlList):
         logging.info("Recherche google url : " + query)
 
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
-            'Accept':
-                'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-            'Accept-Language': 'fr-fr,en;q=0.5',
-            'Accept-Encoding': 'gzip',
-            'DNT': '1',  # Do Not Track Request Header
-            'Connection': 'close'
-        }
+        query = query.replace(' ', '+')
+        browser = webdriver.Firefox(executable_path=r"./lib/geckodriver")
+
+        # browser.get("https://www.google.com/search?q=" + query + "&start=0&num=50")
+        # innerHTML = browser.execute_script("return document.body.innerHTML")  # returns the inner HTML as a string
+        #
+        # print(innerHTML)
+
 
         listeUrls = SearchUrl.modulo_url(self, query, 50, number)
 
         # TODO adapter pour fonctionner avec news et images.
 
         # Remonte les URLs de google search, les URLs avec une balise de titre <h3>
-        for i in range(len(listeUrls)):
-            resp = requests.get(listeUrls[i], headers=headers).text
-            soup = BeautifulSoup(resp, 'html.parser')
-            for link in soup.findAll('a', href=True):
-                if (str(link).find("<h3") != -1):
-                    urlList.append(link.attrs.get('href'))
+        for url_request in listeUrls:
+            browser.get(url_request)
+            time.sleep(1)
 
-        return urlList
+            #Autre méthode pour récupérer les adresses UrL
+            #elems_tagname_a = browser.find_elements_by_xpath("//div[@class='rc']/div[@class='r']/a")
+            # idefix = 0
+            # for elem in elems_tagname_a:
+            #     idefix += 1
+            #     url = str(elem.get_attribute("href"))
+            #     f = open("/tmp/mitroglou.txt", "w")
+            #     f.write(url)
+            #     print("b" + str(idefix) + " : " +  url)
+            #     f.close()
+
+            liste_titres_h3 = browser.find_elements_by_xpath("//div[@class='rc']/div[@class='r']/a/h3")
+
+            for elt in liste_titres_h3:
+                current_url = elt.find_elements_by_xpath("..")[0].get_attribute("href")
+                urlList.append(current_url)
+
+
+            # elems_tagname_a = browser.find_elements_by_tag_name("a")
+            # for elem in elems_tagname_a:
+            #     url = str(elem.get_attribute("href"))
+            #     f = open("/tmp/mitroglou.txt", "w")
+            #     f.write(url)
+            #     print(url)
+            #     f.close()
+        browser.quit()

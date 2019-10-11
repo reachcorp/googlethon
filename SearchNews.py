@@ -4,7 +4,6 @@ import logging
 
 
 class SearchNews(Search):
-
     def search(self, query, number, standard):
         logging.info("Recherche google news : " + query)
 

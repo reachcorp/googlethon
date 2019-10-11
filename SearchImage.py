@@ -7,6 +7,8 @@ class SearchImage(Search):
     def search(self, query, number, standard):
         logging.info("Recherche google image : " + query)
 
+        racineURL = 'https://www.google.co.in/search?q={}&start={}&tbm=isch&num={}&filter=0'
+
         # on s'appuie sur les resultats renvoyé par google search et non ceux de googles images pour de meilleurs résultats
         return googlesearch.search(
             query,

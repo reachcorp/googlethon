@@ -1,12 +1,11 @@
 import datetime
 import json
 import logging
-import urllib.parse
-from Search import Search
-import requests
-from bs4 import BeautifulSoup
+
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
+from Search import Search
+
 
 # kafka_endpoint = str(os.environ['KAFKA_IP']) + ":" + str(os.environ['KAFKA_PORT'])
 # number = str(os.environ['NUMBER_RESULT'])
@@ -17,11 +16,10 @@ from kafka import KafkaProducer
 # search_type = os.environ["SEARCH_TYPE"]
 
 kafka_endpoint = "192.168.0.9:8092"
-number = 10
-standard = "True"
+number = 100
 topic_in = "housToGoogle"
 topic_out_scrapy = "urlToScrapy"
-debug_level = "INFO"
+debug_level = "DEBUG"
 # Trois options de recherche Google : SearchImage, SearchUrl, SearchNews
 # search_type est aussi le group_id du consumer kafka
 search_type = "SearchUrl"
@@ -58,6 +56,7 @@ def main():
         # Traite les résultats (personnes) récupérés par le consumer
         for message in consumer:
             message = message.value
+
             query = message['nom'] + " " + message['prenom']
             if 'motclef' in message:
                 query = query + " " + message['motclef']
@@ -81,6 +80,7 @@ def main():
 
 
             # json a mettre dans la file kafka
+<<<<<<< Updated upstream
             jsonvalue = {'biographics': {
                 "nom": nom,
                 "prenom": prenom,
@@ -94,6 +94,7 @@ def main():
             producer.send(
                 topic_out_scrapy,
                 value=jsonvalue)
+
     except Exception as e:
         logging.error("ERROR : ", e)
     finally:

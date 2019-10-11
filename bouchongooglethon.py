@@ -1,8 +1,7 @@
 import json
 import logging
 from argparse import ArgumentParser
-from time import sleep
-
+import time
 from kafka import KafkaProducer
 
 parser = ArgumentParser(description='Bouchon googlethon')
@@ -23,11 +22,15 @@ def main():
         producer = KafkaProducer(bootstrap_servers='localhost:8092',
                                  value_serializer=lambda v: json.dumps(v).encode('utf-8'))
 
-        tab = {'idBio': '65568', 'nom': 'Chirac', 'prenom': 'Jacques'}
-
+        tab = {'idBio': '65568', 'nom': 'JOHNSON', 'prenom': 'BORIS'}
+        idx = 0
         for i in range(1):
             producer.send('housToGoogle', value=tab)
-            sleep(0.5)
+            idx +=1
+            print("msg n°"+ str(idx) + " envoyé")
+
+            time.sleep(5)
+
 
     except Exception as e:
         logging.error("ERROR : ", e)
