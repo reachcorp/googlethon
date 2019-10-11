@@ -31,7 +31,7 @@ class Search():
         racineURL = ''
         if type_of_search == "SearchNews":
             racineURL = 'https://www.google.co.in/search?q={}&start={}&num={}&filter=0&tbm=nws'
-        elif type_of_search == "SearchImage":
+        elif type_of_search == "SearchImage": #TODO : ATTENTION, le parametre "num" ne fonctionne pas avec Google IMAGE!!!!
             racineURL = 'https://www.google.co.in/search?q={}&start={}&num={}&filter=0&tbm=isch'
         elif type_of_search == "SearchResult":
             racineURL = 'https://www.google.co.in/search?q={}&start={}&num={}&filter=0'
