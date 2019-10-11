@@ -1,28 +1,27 @@
 import datetime
 import json
 import logging
-
+import os
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
 from Search import Search
 
+kafka_endpoint = str(os.environ['KAFKA_IP']) + ":" + str(os.environ['KAFKA_PORT'])
+number = str(os.environ['NUMBER_RESULT'])
+topic_in = str(os.environ['TOPIC_IN'])
+topic_out_scrapy = str(os.environ['TOPIC_OUT_SCRAPY'])
+debug_level = os.environ["DEBUG"]
+search_type = os.environ["SEARCH_TYPE"]
 
-# kafka_endpoint = str(os.environ['KAFKA_IP']) + ":" + str(os.environ['KAFKA_PORT'])
-# number = str(os.environ['NUMBER_RESULT'])
-# standard = str(os.environ['STANDARD'])
-# topic_in = str(os.environ['TOPIC_IN'])
-# topic_out_scrapy = str(os.environ['TOPIC_OUT_SCRAPY'])
-# debug_level = os.environ["DEBUG"]
-# search_type = os.environ["SEARCH_TYPE"]
 
-kafka_endpoint = "192.168.0.9:8092"
-number = 100
-topic_in = "housToGoogle"
-topic_out_scrapy = "urlToScrapy"
-debug_level = "DEBUG"
-# Trois options de recherche Google : SearchImage, SearchUrl, SearchNews
-# search_type est aussi le group_id du consumer kafka
-search_type = "SearchUrl"
+# kafka_endpoint = "192.168.0.9:8092"
+# number = 100
+# topic_in = "housToGoogle"
+# topic_out_scrapy = "urlToScrapy"
+# debug_level = "DEBUG"
+# # Trois options de recherche Google : SearchImage, SearchUrl, SearchNews
+# # search_type est aussi le group_id du consumer kafka
+# search_type = "SearchNews"
 
 def main():
     try:
@@ -58,6 +57,7 @@ def main():
             message = message.value
 
             query = message['nom'] + " " + message['prenom']
+
             if 'motclef' in message:
                 query = query + " " + message['motclef']
             logging.info("### Googlethon : reception d'un message ! " + str(datetime.datetime.now()))
@@ -78,7 +78,6 @@ def main():
                 print(str(index) + " : " + i)
                 index += 1
 
-
             # json a mettre dans la file kafka
             jsonvalue = {'biographics': {
                 "nom": nom,
@@ -93,6 +92,14 @@ def main():
             producer.send(
                 topic_out_scrapy,
                 value=jsonvalue)
+            # Pour tester sans les démoniaques files Kafka
+            # urlList = []
+            # query = "MICHEL GALABRU"
+            # Search.factory(search_type).search(query, number, urlList)
+            # index = 1
+            # for i in urlList:
+            #     print(str(index) + " : " + i)
+            #     index += 1
 
     except Exception as e:
         logging.error("ERROR : ", e)
