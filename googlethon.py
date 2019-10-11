@@ -4,6 +4,7 @@ import logging
 import os
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
+
 from Search import Search
 
 kafka_endpoint = str(os.environ['KAFKA_IP']) + ":" + str(os.environ['KAFKA_PORT'])
@@ -70,9 +71,9 @@ def main():
             # query : les mots de la requête
             # number :  le nombre de resultats souhaité au total
             # urlList : la liste dans laquelle arriveront les résultats de la requête
-            urlList = []
 
-            Search.factory(search_type).search(query, number, urlList)
+            urlList = Search.factory(search_type).search(query, number)
+
             index = 1
             for i in urlList:
                 print(str(index) + " : " + i)
@@ -92,14 +93,7 @@ def main():
             producer.send(
                 topic_out_scrapy,
                 value=jsonvalue)
-            # Pour tester sans les démoniaques files Kafka
-            # urlList = []
-            # query = "MICHEL GALABRU"
-            # Search.factory(search_type).search(query, number, urlList)
-            # index = 1
-            # for i in urlList:
-            #     print(str(index) + " : " + i)
-            #     index += 1
+
 
     except Exception as e:
         logging.error("ERROR : ", e)

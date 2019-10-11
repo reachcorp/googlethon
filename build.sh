@@ -7,7 +7,7 @@ cp -Rf ./Search.py ./docker/context/dockerdist/
 cp -Rf ./SearchFactory.py ./docker/context/dockerdist/
 cp -Rf ./SearchImage.py ./docker/context/dockerdist/
 cp -Rf ./SearchNews.py ./docker/context/dockerdist/
-cp -Rf ./SearchUrl.py ./docker/context/dockerdist/
+cp -Rf ./SearchResult.py ./docker/context/dockerdist/
 cp -Rf ./entrypoint.sh ./docker/context/dockerdist/
 cp -Rf ./requirements.txt ./docker/context/dockerdist/
 cp -Rf ./.google-cookie ./docker/context/dockerdist/
