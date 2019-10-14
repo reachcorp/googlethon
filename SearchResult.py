@@ -5,7 +5,7 @@ from Search import Search
 
 class SearchResult(Search):
     def search(self, query, number):
-        logging.info("Recherche google news : " + query)
+        logging.info("Recherche Google Results : " + query)
         xpath = "//div[@class='rc']/div[@class='r']/a/h3"
         return Search.get_urls(self, query, number, xpath)
 

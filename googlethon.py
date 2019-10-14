@@ -2,6 +2,7 @@ import datetime
 import json
 import logging
 import os
+
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
 
@@ -15,13 +16,13 @@ debug_level = os.environ["DEBUG"]
 search_type = os.environ["SEARCH_TYPE"]
 
 # kafka_endpoint = "192.168.0.9:8092"
-# number = 10
+# number = 183
 # topic_in = "housToGoogle"
 # topic_out_scrapy = "urlToScrapy"
 # debug_level = "DEBUG"
-# # Trois options de recherche Google : SearchImage, SearchUrl, SearchNews
+# # Trois options de recherche Google : SearchImage, SearchResult, SearchNews
 # # search_type est aussi le group_id du consumer kafka
-# search_type = "SearchUrl"
+# search_type = "SearchNews"
 
 
 def main():
@@ -73,19 +74,28 @@ def main():
             # urlList : la liste dans laquelle arriveront les résultats de la requête
 
             urlList = Search.factory(search_type).search(query, number)
+            urlList_to_send = []
 
-            index = 1
-            for i in urlList:
-                print(str(index) + " : " + i)
-                index += 1
+            if search_type == "SearchImage":
+                urlList_to_send = urlList[:number]
+            else:
+                urlList_to_send = urlList
 
-            # json a mettre dans la file kafka
+            if debug_level == "DEBUG" :
+                index = 1
+                for url in urlList_to_send:
+                    print(str(index) + " : " + url)
+                    index += 1
+
+            print("Nombre d'éléments envoyés dans la file Kafka pour une recherche " + search_type + " : " + str(len(urlList_to_send)))
+
+            # Json a mettre dans la file kafka
             jsonvalue = {'biographics': {
                 "nom": nom,
                 "prenom": prenom,
                 "idBio": idBio
             },
-                "url": urlList,
+                "url": urlList_to_send,
                 "idDictionary": message['idDictionary'],
                 "depthLevel": message['depthLevel']
             }
