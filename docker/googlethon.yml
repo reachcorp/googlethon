@@ -8,10 +8,10 @@ services:
     ports:
       - "4444:4444"
   googlethon:
-    image: reachhubcorp/googlethon:latest
+#    image: reachhubcorp/googlethon:latest
     container_name: googlethon
-#    build:
-#      context: ./context/
+    build:
+      context: ./context/
     ports:
       - "2223:2223"
     environment:
