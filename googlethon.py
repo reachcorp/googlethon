@@ -26,7 +26,6 @@ debug_level = "DEBUG"
 search_type = "SearchResult"
 
 
-
 def main():
     try:
         logging.basicConfig(level=logging.INFO)
@@ -41,7 +40,7 @@ def main():
         elif debug_level == "CRITICAL":
             logging.basicConfig(level=logging.CRITICAL)
 
-        logging.info(" Démarrage de Googlethon " + str(datetime.datetime.now()))
+        logging.info(" Demarrage de Googlethon " + str(datetime.datetime.now()))
 
         # Recupère les personnes dans la file kafka entre Housthon et Googlethon
         consumer = KafkaConsumer(
@@ -76,20 +75,17 @@ def main():
             # urlList : la liste dans laquelle arriveront les résultats de la requête
 
             urlList = Search.factory(search_type).search(query, number)
-            urlList_to_send = []
 
             if search_type == "SearchImage":
                 urlList_to_send = urlList[:number]
             else:
                 urlList_to_send = urlList
 
-            if debug_level == "DEBUG" :
+            if debug_level == "DEBUG":
                 index = 1
                 for url in urlList_to_send:
-                    print(str(index) + " : " + url)
+                    logging.debug(str(index) + " : " + url)
                     index += 1
-
-            print("Nombre d'éléments envoyés dans la file Kafka pour une recherche " + search_type + " : " + str(len(urlList_to_send)))
 
             # Json a mettre dans la file kafka
             jsonvalue = {'biographics': {
@@ -105,7 +101,6 @@ def main():
             producer.send(
                 topic_out_scrapy,
                 value=jsonvalue)
-
 
     except Exception as e:
         logging.error("ERROR : ", e)
