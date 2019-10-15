@@ -5,7 +5,9 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import os
 
-remote_firefox_endpoint = str(os.environ['REMOTE_FIREFOX_IP']) + ":" + str(os.environ['REMOTE_FIREFOX_PORT'])
+# remote_firefox_endpoint = str(os.environ['REMOTE_FIREFOX_IP']) + ":" + str(os.environ['REMOTE_FIREFOX_PORT'])
+remote_firefox_endpoint = "192.168.0.9:4444"
+
 
 class Search():
     def search(self, query, number, standard):

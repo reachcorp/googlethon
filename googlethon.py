@@ -8,21 +8,23 @@ from kafka import KafkaProducer
 
 from Search import Search
 
-kafka_endpoint = str(os.environ['KAFKA_IP']) + ":" + str(os.environ['KAFKA_PORT'])
-number = str(os.environ['NUMBER_RESULT'])
-topic_in = str(os.environ['TOPIC_IN'])
-topic_out_scrapy = str(os.environ['TOPIC_OUT_SCRAPY'])
-debug_level = os.environ["DEBUG"]
-search_type = os.environ["SEARCH_TYPE"]
 
-# kafka_endpoint = "192.168.0.9:8092"
-# number = 183
-# topic_in = "housToGoogle"
-# topic_out_scrapy = "urlToScrapy"
-# debug_level = "DEBUG"
-# # Trois options de recherche Google : SearchImage, SearchResult, SearchNews
-# # search_type est aussi le group_id du consumer kafka
-# search_type = "SearchNews"
+# kafka_endpoint = str(os.environ['KAFKA_IP']) + ":" + str(os.environ['KAFKA_PORT'])
+# number = str(os.environ['NUMBER_RESULT'])
+# topic_in = str(os.environ['TOPIC_IN'])
+# topic_out_scrapy = str(os.environ['TOPIC_OUT_SCRAPY'])
+# debug_level = os.environ["DEBUG"]
+# search_type = os.environ["SEARCH_TYPE"]
+
+kafka_endpoint = "192.168.0.9:8092"
+number = 10
+topic_in = "housToGoogle"
+topic_out_scrapy = "urlToScrapy"
+debug_level = "DEBUG"
+# Trois options de recherche Google : SearchImage, SearchUrl, SearchNews
+# search_type est aussi le group_id du consumer kafka
+search_type = "SearchResult"
+
 
 
 def main():
